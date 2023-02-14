@@ -81,6 +81,10 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
                 @Override
                 public void onClick(View view) {
                     viewModel.setItemSelected(position);
+                    if (position == 0)
+                        player.increaseScore();
+                    else
+                        player.decreaseScore();
                     notifyDataSetChanged();
                 }
             });

@@ -1,8 +1,9 @@
 package com.example.clickergame;
 
+import static com.example.clickergame.Finals.PLAYER_NAME;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
         getSupportFragmentManager()
                 .beginTransaction()
                 .setReorderingAllowed(true)
-                .add(android.R.id.content, new MyPreferences(), "prefFrag")
+                .add(android.R.id.content, new GameSettings(), "prefFrag")
                 .addToBackStack(null)
                 .commit();
     }
@@ -65,12 +66,14 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
     // func for pass data between the fragment
     @Override
     public void OnClickJoinGame(String playerName){
-        Log.i("hello", "hello "+playerName);
+        Bundle bundle = new Bundle();
+        bundle.putString(PLAYER_NAME, playerName);
+//        Log.i("hello", playerName);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
         {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.fragmentContainerView, GameBoardClicker.class, null,"GameBoardClicker")
+                    .add(R.id.fragmentContainerView, GameBoardClicker.class, bundle,"GameBoardClicker")
                     .addToBackStack("BBB")
                     .commit();
             getSupportFragmentManager().executePendingTransactions();

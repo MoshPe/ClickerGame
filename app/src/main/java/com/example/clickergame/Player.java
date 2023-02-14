@@ -2,17 +2,25 @@ package com.example.clickergame;
 
 public class Player {
     private String name;
-    private String id;
+    private int id;
     private int score;
+    private Finals.State myState;
 
-    public Player(String name, int score, String id) {
+    public Player(String name, int score, int id) {
         this.name = name;
         this.score = score;
         this.id = id;
+        this.myState = Finals.State.ACTIVE;
     }
 
-    public Player() {
+    public Player() {}
 
+    public void increaseScore() {
+        this.score++;
+    }
+
+    public void decreaseScore() {
+        this.score--;
     }
 
     public int getScore() {
@@ -23,11 +31,11 @@ public class Player {
         this.score = score;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -37,6 +45,14 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Finals.State getMyState() {
+        return myState;
+    }
+
+    public void setMyState(Finals.State myState) {
+        this.myState = myState;
     }
 
     public int compare(Player other) {

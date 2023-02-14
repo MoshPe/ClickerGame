@@ -1,5 +1,7 @@
 package com.example.clickergame;
 
+import static com.example.clickergame.Finals.PLAYER_NAME;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,18 +23,10 @@ import android.view.ViewGroup;
 
 public class GameBoardClicker extends Fragment {
     private PlayersModel viewModel;
+    private String playerName = "";
 
     public GameBoardClicker() {
         // Required empty public constructor
-    }
-
-    public static GameBoardClicker newInstance(String param1, String param2) {
-        GameBoardClicker fragment = new GameBoardClicker();
-        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -56,15 +51,20 @@ public class GameBoardClicker extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+        this.playerName = getArguments().getString(PLAYER_NAME);
+//        Log.i("hello", getArguments().getString("PLAYER_NAME"));
         return inflater.inflate(R.layout.layout_game_board, container, false);
     }
 
     @Override
     public void onViewCreated(View view,@Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.i("hello", String.valueOf(savedInstanceState));
         showInstructionsDialog();
-        RecyclerView rvCountries = (RecyclerView) view.findViewById(R.id.countryRec);
+        Player player = new Player(this.playerName, Finals.PLAYER_INIT_SCORE, 0);
+        RecyclerView rvCountries = (RecyclerView) view.findViewById(R.id.playersRec);
         viewModel = new ViewModelProvider(requireActivity()).get(PlayersModel.class);
+        viewModel.setPlayer(player);
         PlayerAdapter adapter = new PlayerAdapter(view.getContext(), getActivity(), viewModel);
         rvCountries.setAdapter(adapter);
         rvCountries.setLayoutManager(new GridLayoutManager(view.getContext(), 4));

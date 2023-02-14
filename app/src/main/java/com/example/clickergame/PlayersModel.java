@@ -1,5 +1,7 @@
 package com.example.clickergame;
 
+import com.example.clickergame.Finals;
+
 import android.app.Application;
 import android.content.Context;
 
@@ -11,25 +13,29 @@ import java.util.ArrayList;
 
 
 public class PlayersModel extends AndroidViewModel {
-    MutableLiveData<ArrayList<Player>> playerLiveData;
+    MutableLiveData<ArrayList<Player>> playersLiveData;
     MutableLiveData<Integer> itemSelectedLive;
+    MutableLiveData<Player> playerLiveData;
     Integer itemSelected;
     ArrayList<Player> playersList;
+    Player player;
 
     public PlayersModel(Application app) {
         super(app);
-        this.playerLiveData = new MutableLiveData<>();
+        this.playersLiveData = new MutableLiveData<>();
         this.itemSelectedLive = new MutableLiveData<>();
+        this.playerLiveData = new MutableLiveData<>();
         initPlayersList(app);
-
         this.itemSelected = RecyclerView.NO_POSITION;
         this.itemSelectedLive.setValue(this.itemSelected);
-
     }
 
-    public void initPlayersList(Application app){
+    public void initPlayersList(Application app) {
         playersList = new ArrayList<Player>();
-        playersList.add(new Player("player", 5, "id"));
+        playersList.add(new Player("player", 5, 0));
+
+        //TODO Pull players from db
+        //TODO push player to db
 //        Context context =  app.getApplicationContext();
 //        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 //        boolean savedCountries = sharedPreferences.getBoolean("removed_countries", false);
@@ -44,7 +50,7 @@ public class PlayersModel extends AndroidViewModel {
 //        }
 //        else
 //            this.countryList = parseCountries(ALL_COUNTRIES, context);
-        this.playerLiveData.setValue(this.playersList);
+        this.playersLiveData.setValue(this.playersList);
     }
 
     public void setSPPlayers(Context context){
@@ -64,7 +70,7 @@ public class PlayersModel extends AndroidViewModel {
     }
 
     public MutableLiveData<ArrayList<Player>> getPlayerLiveData() {
-        return this.playerLiveData;
+        return this.playersLiveData;
     }
 
     public MutableLiveData<Integer> getItemSelected() {
@@ -80,9 +86,17 @@ public class PlayersModel extends AndroidViewModel {
         return this.itemSelected;
     }
 
+    public void setPlayer(Player player) {
+        this.player = player;
+
+        this.playersList.add(0, this.player);
+        this.player.setId(this.playersList.size() + 1);
+        this.playerLiveData.setValue(player);
+    }
+
     public void removePlayer(int position){
         playersList.remove(position);
-        playerLiveData.setValue(playersList);
+        playersLiveData.setValue(playersList);
     }
 
     public Player getPlayer(int position){
