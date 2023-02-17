@@ -4,6 +4,7 @@ import static com.example.clickergame.Finals.PLAYER_NAME;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -82,17 +83,12 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
 
 
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        Log.i("dfgsdfgdfgdfgdfg", "dfgsdfgdfgdfgdfg");
-//        PlayersModel viewModel = new ViewModelProvider(this).get(PlayersModel.class);
-//        viewModel.setSPPlayers(this);
-//    }
-
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        Log.i("dfgsdfgdfgdfgdfg", "dfgsdfgdfgdfgdfg");
-//    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        PlayersModel viewModel = new ViewModelProvider(this).get(PlayersModel.class);
+        Player player = viewModel.getMyPlayer();
+        player.setMyState(Finals.State.NOT_ACTIVE);
+        viewModel.onPauseUpdatePlayer();
+    }
 }

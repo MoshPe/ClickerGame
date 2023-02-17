@@ -3,10 +3,11 @@ package com.example.clickergame;
 public class Player {
     private String name;
     private int id;
-    private int score;
+    private String key;
+    private long score;
     private Finals.State myState;
 
-    public Player(String name, int score, int id) {
+    public Player(String name, long score, int id) {
         this.name = name;
         this.score = score;
         this.id = id;
@@ -23,7 +24,23 @@ public class Player {
         this.score--;
     }
 
-    public int getScore() {
+    public Player(Player p){
+        this.name = p.name;
+        this.score = p.score;
+        this.id = p.id;
+        this.myState = p.myState;
+        this.key = p.key;
+    }
+
+    public String getKey() {
+        return this.key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public long getScore() {
         return score;
     }
 
@@ -55,9 +72,11 @@ public class Player {
         this.myState = myState;
     }
 
-    public int compare(Player other) {
-        return Integer.compare(this.score, other.score);
+    public long compare(Player other) {
+        return Long.compare(this.score, other.score);
     }
+
+    public boolean isEqual(Player other) { return other.key.equals(this.key); }
 
     @Override
     public String toString() {

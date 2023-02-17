@@ -21,7 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class GameBoardClicker extends Fragment {
+public class GameBoardClicker extends Fragment implements PlayerAdapter.EndGameListener {
     private PlayersModel viewModel;
     private String playerName = "";
 
@@ -41,6 +41,9 @@ public class GameBoardClicker extends Fragment {
         switch (item.getItemId()){
             case R.id.pause:
                 showPauseDialog();
+                Player player = viewModel.getMyPlayer();
+                player.setMyState(Finals.State.SUSPEND);
+                viewModel.onPauseUpdatePlayer();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -52,7 +55,6 @@ public class GameBoardClicker extends Fragment {
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         this.playerName = getArguments().getString(PLAYER_NAME);
-//        Log.i("hello", getArguments().getString("PLAYER_NAME"));
         return inflater.inflate(R.layout.layout_game_board, container, false);
     }
 
@@ -64,10 +66,15 @@ public class GameBoardClicker extends Fragment {
         Player player = new Player(this.playerName, Finals.PLAYER_INIT_SCORE, 0);
         RecyclerView rvCountries = (RecyclerView) view.findViewById(R.id.playersRec);
         viewModel = new ViewModelProvider(requireActivity()).get(PlayersModel.class);
+        viewModel.initPlayersList(view.getContext());
         viewModel.setPlayer(player);
-        PlayerAdapter adapter = new PlayerAdapter(view.getContext(), getActivity(), viewModel);
+        PlayerAdapter adapter = new PlayerAdapter(this, view.getContext(), getActivity(), viewModel);
         rvCountries.setAdapter(adapter);
         rvCountries.setLayoutManager(new GridLayoutManager(view.getContext(), 4));
+    }
+
+    public void openDialog(boolean isWin){
+        showEndGameDialog(isWin);
     }
 
     private void showPauseDialog() {
@@ -84,5 +91,17 @@ public class GameBoardClicker extends Fragment {
         GameInstructionsDialog editNameDialogFragment = GameInstructionsDialog.newInstance();
         editNameDialogFragment.setTargetFragment(this, 300);
         editNameDialogFragment.show(fm, "Instructions dialog");
+    }
+
+    @Override
+    public void showEndGameDialog(boolean isWin) {
+        EndGameDialog endGameFrag = (EndGameDialog) getParentFragmentManager().findFragmentByTag("End Game dialog");
+        if (endGameFrag != null)
+            return;
+        FragmentManager fm = getParentFragmentManager();
+        //TODO send player instance to pause frag for changing the background
+        EndGameDialog editNameDialogFragment = EndGameDialog.newInstance(isWin);
+        editNameDialogFragment.setTargetFragment(this, 300);
+        editNameDialogFragment.show(fm, "End Game dialog");
     }
 }
