@@ -49,15 +49,7 @@ public class EndGameDialog extends DialogFragment {
         if (this.isWin){
             dialogBuilder.setTitle(R.string.win);
             dialogBuilder.setIcon(R.drawable.party_emojii);
-            dialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null) {
-                    viewModel.resetGame();
-                    dialog.dismiss();
-                }
-            }
-        });
+            viewModel.resetGame();
         }
         else{
             dialogBuilder.setTitle(R.string.lost);

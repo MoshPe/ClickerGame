@@ -55,8 +55,9 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
                     viewModel.removePlayer(player);
                     viewModel.setMyPlayerVisibility(true);
                     showEndGameDialog(false);
-                } else if (player.getScore() == 100){
+                } else if (player.getScore() == 100 && !viewModel.getMyPlayerVisibility()){
                     showEndGameDialog(true);
+                    viewModel.setMyPlayerVisibility(true);
                 }
                 notifyItemChanged(0);
             }

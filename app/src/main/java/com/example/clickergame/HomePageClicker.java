@@ -69,6 +69,20 @@ public class HomePageClicker extends Fragment implements View.OnClickListener  {
             }
         });
         ((Button) view.findViewById(R.id.exit_btn)).setOnClickListener(this);
+        Context context =  getContext();
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//        boolean savedCountries = sharedPreferences.getBoolean("removed_countries", false);
+////        if (savedCountries){
+////            this.countryList = parseCountries(ALL_COUNTRIES, context);
+////            Set<String> countries = sharedPreferences.getStringSet("savedCountries", new HashSet<String>());
+////            this.countryList.removeIf(country -> !countries.contains(country.getName()));
+////        } else
+////            this.countryList = parseCountries(ALL_COUNTRIES, context);
+//        if (savedCountries){
+//            this.countryList = importCountries(context, SAVED_COUNTRIES);
+//        }
+//        else
+//            this.countryList = parseCountries(ALL_COUNTRIES, context);
     }
 
     @Override

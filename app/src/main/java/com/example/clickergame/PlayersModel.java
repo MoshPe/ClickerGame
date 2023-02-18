@@ -63,7 +63,7 @@ public class PlayersModel extends AndroidViewModel {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         };
-        database.addValueEventListener(postListener);
+        database.limitToFirst(16).addValueEventListener(postListener);
 
 //        Context context =  app.getApplicationContext();
 //        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -174,6 +174,9 @@ public class PlayersModel extends AndroidViewModel {
     }
 
     public void resetGame() {
-        this.database.removeValue();
+        if (!playersList.isEmpty()){
+            this.database.removeValue();
+            playersList.clear();
+        }
     }
 }
