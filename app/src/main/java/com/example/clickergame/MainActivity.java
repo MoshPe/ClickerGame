@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
         super.onResume();
         PlayersModel viewModel = new ViewModelProvider(this).get(PlayersModel.class);
         Player player = viewModel.getMyPlayer();
-        if (player != null) {
+        if (player != null && player.getKey() != null) {
             player.setMyState(Finals.State.ACTIVE);
             viewModel.onPauseUpdatePlayer();
         }

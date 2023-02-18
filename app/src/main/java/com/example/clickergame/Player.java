@@ -32,7 +32,8 @@ public class Player implements Serializable {
     }
 
     public void decreaseScore() {
-        this.score--;
+        if (this.score > 0)
+            this.score--;
     }
 
     public Player(Player p){

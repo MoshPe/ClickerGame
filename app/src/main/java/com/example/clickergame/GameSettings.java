@@ -20,4 +20,6 @@ public class GameSettings extends PreferenceFragmentCompat {
         view.setBackgroundResource(R.color.white);
         return view;
     }
+
+
 }
