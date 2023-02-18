@@ -172,4 +172,8 @@ public class PlayersModel extends AndroidViewModel {
     public boolean getMyPlayerVisibility() {
         return this.player.isVisibility();
     }
+
+    public void resetGame() {
+        this.database.removeValue();
+    }
 }

@@ -49,6 +49,15 @@ public class EndGameDialog extends DialogFragment {
         if (this.isWin){
             dialogBuilder.setTitle(R.string.win);
             dialogBuilder.setIcon(R.drawable.party_emojii);
+            dialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (dialog != null) {
+                    viewModel.resetGame();
+                    dialog.dismiss();
+                }
+            }
+        });
         }
         else{
             dialogBuilder.setTitle(R.string.lost);
@@ -56,23 +65,10 @@ public class EndGameDialog extends DialogFragment {
             ((ImageView) view.findViewById(R.id.imageView)).setImageResource(R.drawable.try_again);
         }
         dialogBuilder.setView(view);
-
-
-//        dialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                if (dialog != null) {
-//                    //TODO change player cube to white
-//                    dialog.dismiss();
-//                }
-//                //delete board
-//            }
-//        });
-
         dialogBuilder.setNegativeButton(R.string.return_home, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO change player cube to red and set player to inactive in DB
+                getParentFragmentManager().popBackStackImmediate("BBB", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 dialog.dismiss();
             }
         });
