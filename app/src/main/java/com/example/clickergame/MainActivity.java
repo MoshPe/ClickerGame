@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
     public void OnClickJoinGame(String playerName) {
         Bundle bundle = new Bundle();
         bundle.putString(PLAYER_NAME, playerName);
+        Log.i("hello on join", "create gameboard");
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)

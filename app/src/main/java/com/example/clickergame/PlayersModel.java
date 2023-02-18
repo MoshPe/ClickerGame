@@ -135,6 +135,7 @@ public class PlayersModel extends AndroidViewModel {
     public void setPlayer(Player player) {
         this.player = player;
         this.player.setId(this.playersList.size() + 1);
+        this.player.setVisibility(false);
         // add player to db
         String key = this.database.push().getKey(); // generate unique key
         player.setKey(key);
@@ -162,5 +163,13 @@ public class PlayersModel extends AndroidViewModel {
 
     public Player getMyPlayer(){
         return this.player;
+    }
+
+    public void setMyPlayerVisibility(boolean visibility){
+        this.player.setVisibility(visibility);
+    }
+
+    public boolean getMyPlayerVisibility() {
+        return this.player.isVisibility();
     }
 }

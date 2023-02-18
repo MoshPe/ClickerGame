@@ -8,6 +8,7 @@ public class Player implements Serializable {
     private String key;
     private long score;
     private Finals.State myState;
+    private boolean visibility;
 
     public Player(String name, long score, int id) {
         this.name = name;
@@ -17,6 +18,14 @@ public class Player implements Serializable {
     }
 
     public Player() {}
+
+    public boolean isVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(boolean visibility) {
+        this.visibility = visibility;
+    }
 
     public void increaseScore() {
         this.score++;

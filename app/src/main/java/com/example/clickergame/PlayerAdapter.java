@@ -51,12 +51,12 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
         viewModel.getPlayerLiveData().observe(activity, new Observer<Player>() {
             @Override
             public void onChanged(Player player) {
-                if (player.getScore() == 0){
+                if (player.getScore() == 0 && !viewModel.getMyPlayerVisibility()){
                     viewModel.removePlayer(player);
+                    viewModel.setMyPlayerVisibility(true);
                     showEndGameDialog(false);
                 } else if (player.getScore() == 100){
                     showEndGameDialog(true);
-//                    viewModel.getPlayerLiveData().removeObserver(this);
                 }
                 notifyItemChanged(0);
             }

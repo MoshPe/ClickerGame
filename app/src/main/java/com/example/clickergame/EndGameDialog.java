@@ -57,6 +57,7 @@ public class EndGameDialog extends DialogFragment {
         }
         dialogBuilder.setView(view);
 
+
 //        dialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 //            @Override
 //            public void onClick(DialogInterface dialog, int which) {
@@ -72,12 +73,6 @@ public class EndGameDialog extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //TODO change player cube to red and set player to inactive in DB
-
-//                getFragmentManager().popBackStack("BBB", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-//                if (fragment != null) {
-//                    getFragmentManager().beginTransaction().remove(fragment).commit();
-//                }
-
                 dialog.dismiss();
             }
         });
