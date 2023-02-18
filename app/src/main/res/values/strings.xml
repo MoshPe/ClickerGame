@@ -7,11 +7,9 @@
     <string name="allow_notification">Allow notifications</string>
     <string name="paused_game">Paused Game</string>
     <string name="resume">Resume</string>
-    <string name="quit">Quit</string>
+    <string name="quit">Quit Game</string>
     <string name="instructions">Instructions</string>
     <string name="got_it">Got it!</string>
-
-
     <string name="win">YOU WON!!!</string>
     <string name="lost">YOU LOST!!!</string>
     <string name="ok">OK</string>

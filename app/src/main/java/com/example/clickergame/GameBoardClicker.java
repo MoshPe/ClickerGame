@@ -2,6 +2,7 @@ package com.example.clickergame;
 
 import static com.example.clickergame.Finals.PLAYER_NAME;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,9 +20,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.Objects;
 
 
-public class GameBoardClicker extends Fragment implements PlayerAdapter.EndGameListener {
+public class GameBoardClicker extends Fragment implements PlayerAdapter.EndGameListener, EndGameDialog.EditSeekBarProgressListener {
     private PlayersModel viewModel;
     private String playerName = "";
 
@@ -40,10 +44,10 @@ public class GameBoardClicker extends Fragment implements PlayerAdapter.EndGameL
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.pause:
-                showPauseDialog();
                 Player player = viewModel.getMyPlayer();
                 player.setMyState(Finals.State.SUSPEND);
                 viewModel.onPauseUpdatePlayer();
+                showPauseDialog(player);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -61,7 +65,6 @@ public class GameBoardClicker extends Fragment implements PlayerAdapter.EndGameL
     @Override
     public void onViewCreated(View view,@Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.i("hello", String.valueOf(savedInstanceState));
         showInstructionsDialog();
         Player player = new Player(this.playerName, Finals.PLAYER_INIT_SCORE, 0);
         RecyclerView rvCountries = (RecyclerView) view.findViewById(R.id.playersRec);
@@ -73,14 +76,10 @@ public class GameBoardClicker extends Fragment implements PlayerAdapter.EndGameL
         rvCountries.setLayoutManager(new GridLayoutManager(view.getContext(), 4));
     }
 
-    public void openDialog(boolean isWin){
-        showEndGameDialog(isWin);
-    }
-
-    private void showPauseDialog() {
+    private void showPauseDialog(Player player) {
         FragmentManager fm = getParentFragmentManager();
         //TODO send player instance to pause frag for changing the background
-        PauseDialogFrag editNameDialogFragment = PauseDialogFrag.newInstance();
+        PauseDialogFrag editNameDialogFragment = PauseDialogFrag.newInstance(player);
         editNameDialogFragment.setTargetFragment(this, 300);
         editNameDialogFragment.show(fm, "Pause dialog");
     }
@@ -95,13 +94,20 @@ public class GameBoardClicker extends Fragment implements PlayerAdapter.EndGameL
 
     @Override
     public void showEndGameDialog(boolean isWin) {
+        Log.i("hello dialog", "outside dialog");
         EndGameDialog endGameFrag = (EndGameDialog) getParentFragmentManager().findFragmentByTag("End Game dialog");
-        if (endGameFrag != null)
+        if (endGameFrag != null && Objects.requireNonNull(((EndGameDialog) endGameFrag).getDialog()).isShowing())
             return;
+        Log.i("hello dialog", "inside dialog");
         FragmentManager fm = getParentFragmentManager();
         //TODO send player instance to pause frag for changing the background
-        EndGameDialog editNameDialogFragment = EndGameDialog.newInstance(isWin);
-        editNameDialogFragment.setTargetFragment(this, 300);
-        editNameDialogFragment.show(fm, "End Game dialog");
+        EndGameDialog endGameDialog = EndGameDialog.newInstance(isWin);
+        endGameDialog.setTargetFragment(this, 300);
+        endGameDialog.show(fm, "End Game dialog");
+    }
+
+    @Override
+    public void onFinishSeekBarDialog() {
+        getParentFragmentManager().popBackStackImmediate("BBB", FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 }

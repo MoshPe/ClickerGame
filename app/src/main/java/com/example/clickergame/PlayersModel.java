@@ -55,7 +55,7 @@ public class PlayersModel extends AndroidViewModel {
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 pullData(dataSnapshot);
             }
 
@@ -106,6 +106,8 @@ public class PlayersModel extends AndroidViewModel {
             else
                 this.playersList.add(new Player(temp));
         }
+        if (!this.playersList.isEmpty())
+            this.playerLiveData.setValue(this.playersList.get(0));
         this.playersLiveData.setValue(this.playersList);
     }
 
@@ -133,7 +135,6 @@ public class PlayersModel extends AndroidViewModel {
     public void setPlayer(Player player) {
         this.player = player;
         this.player.setId(this.playersList.size() + 1);
-        this.playerLiveData.setValue(player);
         // add player to db
         String key = this.database.push().getKey(); // generate unique key
         player.setKey(key);

@@ -4,6 +4,7 @@ import static com.example.clickergame.Finals.PLAYER_NAME;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.res.Configuration;
@@ -18,21 +19,20 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        GameBoardClicker gameBoardClicker = (GameBoardClicker) getSupportFragmentManager().findFragmentByTag("GameBoardClicker");
-
-        if ((getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)){
-            if (gameBoardClicker != null) {
-                getSupportFragmentManager().beginTransaction()
-                        .show(gameBoardClicker)
-                        .commit();
-            }
-            else {
+//        GameBoardClicker gameBoardClicker = (GameBoardClicker) getSupportFragmentManager().findFragmentByTag("GameBoardClicker");
+//
+//        if ((getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
+//            if (gameBoardClicker != null) {
 //                getSupportFragmentManager().beginTransaction()
-//                        .add(R.id.fragmentDetailContainerView, gameBoardClicker.class,null, "GameBoardClicker")
+//                        .show(gameBoardClicker)
 //                        .commit();
-            }
-            getSupportFragmentManager().executePendingTransactions();
-        }
+//            } else {
+//                getSupportFragmentManager().beginTransaction()
+//                        .add(R.id.fragmentContainerView, HomePageClicker.class,null, "HomePage")
+//                        .commit();
+//            }
+//            getSupportFragmentManager().executePendingTransactions();
+//        }
     }
 
     // manu
@@ -66,29 +66,38 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
 
     // func for pass data between the fragment
     @Override
-    public void OnClickJoinGame(String playerName){
+    public void OnClickJoinGame(String playerName) {
         Bundle bundle = new Bundle();
         bundle.putString(PLAYER_NAME, playerName);
-//        Log.i("hello", playerName);
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-        {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.fragmentContainerView, GameBoardClicker.class, bundle,"GameBoardClicker")
+                    .add(R.id.fragmentContainerView, GameBoardClicker.class, bundle, "GameBoardClicker")
                     .addToBackStack("BBB")
                     .commit();
             getSupportFragmentManager().executePendingTransactions();
         }
     }
 
-
-
     @Override
     protected void onPause() {
         super.onPause();
         PlayersModel viewModel = new ViewModelProvider(this).get(PlayersModel.class);
         Player player = viewModel.getMyPlayer();
-        player.setMyState(Finals.State.NOT_ACTIVE);
-        viewModel.onPauseUpdatePlayer();
+        if (player != null) {
+            player.setMyState(Finals.State.NOT_ACTIVE);
+            viewModel.onPauseUpdatePlayer();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PlayersModel viewModel = new ViewModelProvider(this).get(PlayersModel.class);
+        Player player = viewModel.getMyPlayer();
+        if (player != null) {
+            player.setMyState(Finals.State.ACTIVE);
+            viewModel.onPauseUpdatePlayer();
+        }
     }
 }

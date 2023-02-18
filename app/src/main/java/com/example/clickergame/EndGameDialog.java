@@ -9,7 +9,10 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 public class EndGameDialog extends DialogFragment {
@@ -53,27 +56,43 @@ public class EndGameDialog extends DialogFragment {
             ((ImageView) view.findViewById(R.id.imageView)).setImageResource(R.drawable.try_again);
         }
         dialogBuilder.setView(view);
-        dialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null) {
-                    //TODO change player cube to white
-                    dialog.dismiss();
-                }
-                //delete board
-            }
-        });
+
+//        dialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                if (dialog != null) {
+//                    //TODO change player cube to white
+//                    dialog.dismiss();
+//                }
+//                //delete board
+//            }
+//        });
 
         dialogBuilder.setNegativeButton(R.string.return_home, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //TODO change player cube to red and set player to inactive in DB
-                getActivity().finish();
-                System.exit(0);
+
+//                getFragmentManager().popBackStack("BBB", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                if (fragment != null) {
+//                    getFragmentManager().beginTransaction().remove(fragment).commit();
+//                }
+
+                dialog.dismiss();
             }
         });
-
         return dialogBuilder.create();
+    }
+
+    public interface EditSeekBarProgressListener {
+        void onFinishSeekBarDialog();
+    }
+
+    public void sendBackResult() {
+        // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
+        EditSeekBarProgressListener listener = (EditSeekBarProgressListener) getTargetFragment();
+        listener.onFinishSeekBarDialog();
+        dismiss();
     }
 }
 

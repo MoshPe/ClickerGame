@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder> {
     private final Context context;
@@ -28,32 +29,46 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
     public PlayerAdapter(EndGameListener gameClicker, Context context, FragmentActivity activity, PlayersModel viewModel) {
         this.viewModel = viewModel;
         this.context = context;
+        this.playersList = new ArrayList<>();
 
         viewModel.getPlayersLiveData().observe(activity, new Observer<ArrayList<Player>>() {
             @Override
             public void onChanged(ArrayList<Player> players) {
                 setPlayersList(players);
                 if (!players.isEmpty()) {
-                    if (players.get(0).getScore() == 100){
-                        gameClicker.showEndGameDialog(true);
-                    }
-                    else {
-                        for (int i = 1; i < players.size(); i++) {
-                            if (players.get(i).getScore() == 100){
-                                gameClicker.showEndGameDialog(false);
-                                break;
-                            }
+                    for (int i = 1; i < players.size(); i++) {
+                        if (players.get(i).getScore() == 100){
+                            gameClicker.showEndGameDialog(false);
+                            break;
                         }
                     }
                 }
                 notifyDataSetChanged();
             }
+
         });
 
         viewModel.getPlayerLiveData().observe(activity, new Observer<Player>() {
             @Override
             public void onChanged(Player player) {
-                notifyDataSetChanged();
+                if (player.getScore() == 0){
+                    viewModel.removePlayer(player);
+                    showEndGameDialog(false);
+                } else if (player.getScore() == 100){
+                    showEndGameDialog(true);
+//                    viewModel.getPlayerLiveData().removeObserver(this);
+                }
+                notifyItemChanged(0);
+            }
+
+            private void showEndGameDialog(boolean isWin) {
+                EndGameDialog endGameFrag = (EndGameDialog)  activity.getSupportFragmentManager().findFragmentByTag("End Game dialog");
+                if (endGameFrag != null && Objects.requireNonNull(((EndGameDialog) endGameFrag).getDialog()).isShowing())
+                    return;
+                FragmentManager fm = activity.getSupportFragmentManager();
+                //TODO send player instance to pause frag for changing the background
+                EndGameDialog endGameDialog = EndGameDialog.newInstance(isWin);
+                endGameDialog.show(fm, "End Game dialog");
             }
         });
     }
@@ -75,7 +90,6 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Player player = playersList.get(position);
         this.selectedPosition = this.viewModel.getPosition();
-        Log.i("hello state", "player key " + player.getKey() + " state " + player.getMyState());
         switch (player.getMyState()){
             case ACTIVE:
                 holder.itemView.setBackgroundResource(R.color.green);
@@ -85,6 +99,9 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
                 break;
             case SUSPEND:
                 holder.itemView.setBackgroundResource(R.color.orange);
+                break;
+            default:
+                holder.itemView.setBackgroundResource(R.color.green);
                 break;
         }
 
@@ -128,6 +145,7 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
                         viewModel.setItemSelected(position);
                         if (position == 0){
                             viewModel.increasePlayerScore(player);
+                            notifyItemChanged(0);
                             player.increaseScore();
                         }
                         else {
@@ -135,10 +153,11 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
                                 viewModel.decreasePlayerScore(player);
                                 player.decreaseScore();
                             }
-                            else
-                                viewModel.removePlayer(player);
+                            else {
+                                playersList.remove(player);
+                            }
+                            notifyDataSetChanged();
                         }
-                        notifyDataSetChanged();
                     }
                 }
             });
