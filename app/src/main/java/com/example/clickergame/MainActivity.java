@@ -4,21 +4,37 @@ import static com.example.clickergame.Finals.PLAYER_NAME;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreferenceCompat;
 
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback;
+import org.imaginativeworld.oopsnointernet.dialogs.pendulum.DialogPropertiesPendulum;
+import org.imaginativeworld.oopsnointernet.dialogs.pendulum.NoInternetDialogPendulum;
+import org.imaginativeworld.oopsnointernet.dialogs.signal.DialogPropertiesSignal;
+import org.imaginativeworld.oopsnointernet.dialogs.signal.NoInternetDialogSignal;
+import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire;
+
 public class MainActivity extends AppCompatActivity implements HomePageClicker.FragHomePageListener {
+    private NetworkBroadcastReceiver r = new NetworkBroadcastReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        changeTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 //        GameBoardClicker gameBoardClicker = (GameBoardClicker) getSupportFragmentManager().findFragmentByTag("GameBoardClicker");
 //
 //        if ((getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
@@ -33,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
 //            }
 //            getSupportFragmentManager().executePendingTransactions();
 //        }
+//        checkNetwork();
     }
 
     // manu
@@ -41,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
         getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -64,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
                 .commit();
     }
 
-    // func for pass data between the fragment
     @Override
     public void OnClickJoinGame(String playerName) {
         Bundle bundle = new Bundle();
@@ -83,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(r);
         PlayersModel viewModel = new ViewModelProvider(this).get(PlayersModel.class);
         Player player = viewModel.getMyPlayer();
         if (player != null) {
@@ -94,11 +110,22 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
     @Override
     protected void onResume() {
         super.onResume();
+        IntentFilter i = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(r, i);
         PlayersModel viewModel = new ViewModelProvider(this).get(PlayersModel.class);
         Player player = viewModel.getMyPlayer();
         if (player != null && player.getKey() != null) {
             player.setMyState(Finals.State.ACTIVE);
             viewModel.onPauseUpdatePlayer();
+        }
+    }
+
+    public void changeTheme(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean useDarkTheme = preferences.getBoolean("switch_theme", false);
+        Log.i("theme:", "get theme bool from main activity:"+useDarkTheme);
+        if (useDarkTheme) {
+            setTheme(R.style.Theme_ClickerGame_Dark);
         }
     }
 }

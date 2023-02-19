@@ -146,7 +146,7 @@ public class PlayersModel extends AndroidViewModel {
     }
 
     public void onPauseUpdatePlayer() {
-        if (player != null)
+        if (player != null && player.getKey() != null)
             this.database.child(player.getKey()).child("myState").setValue(player.getMyState());
     }
 

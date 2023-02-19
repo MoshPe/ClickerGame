@@ -17,7 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 
-public class HomePageClicker extends Fragment implements View.OnClickListener, PauseDialogFrag.resetHomeBtns {
+public class HomePageClicker extends Fragment implements View.OnClickListener {
     private FragHomePageListener listener;
     private EditText playerNameET;
     private TextView setName;
@@ -75,9 +75,6 @@ public class HomePageClicker extends Fragment implements View.OnClickListener, P
         joinGame = view.findViewById(R.id.join_btn);
         if (playerKey != null){
             listener.OnClickJoinGame(playerKey);
-            playerNameET.setVisibility(View.GONE);
-            setName.setVisibility(View.GONE);
-            joinGame.setText("Resume Game");
         }
 
 
@@ -101,14 +98,6 @@ public class HomePageClicker extends Fragment implements View.OnClickListener, P
         getActivity().finish();
         System.exit(0);
     }
-
-    @Override
-    public void onResetHomeBtns() {
-        playerNameET.setVisibility(View.VISIBLE);
-        setName.setVisibility(View.VISIBLE);
-        joinGame.setText("Join game");
-    }
-
 
     public interface FragHomePageListener{
         void OnClickJoinGame(String playerName);

@@ -12,7 +12,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-
+        <item name="background_color">#FFFFFF</item>
+        <item name="text_color">#000000</item>
         <!-- force direction ltr -->
         <item name="android:layoutDirection">ltr</item>
     </style>

@@ -68,8 +68,4 @@ public class PauseDialogFrag extends DialogFragment  {
         });
         return dialogBuilder.create();
     }
-
-    public interface resetHomeBtns {
-        void onResetHomeBtns();
-    }
 }
