@@ -1,27 +1,20 @@
 package com.example.clickergame;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 
-public class HomePageClicker extends Fragment implements View.OnClickListener, PauseDialogFrag.resetHomeBtns {
+public class HomePageClicker extends Fragment implements View.OnClickListener  {
     private FragHomePageListener listener;
-    private EditText playerNameET;
-    private TextView setName;
-    private Button joinGame;
 
 
     public HomePageClicker() {
@@ -67,19 +60,7 @@ public class HomePageClicker extends Fragment implements View.OnClickListener, P
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Context context =  getContext();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        this.playerNameET = view.findViewById(R.id.editTextTextPersonName);
-        String playerKey = sharedPreferences.getString("playerKey", null);
-        setName = view.findViewById(R.id.textView3);
-        joinGame = view.findViewById(R.id.join_btn);
-        if (playerKey != null){
-            listener.OnClickJoinGame(playerKey);
-            playerNameET.setVisibility(View.GONE);
-            setName.setVisibility(View.GONE);
-            joinGame.setText("Resume Game");
-        }
-
+        EditText playerNameET = view.findViewById(R.id.editTextTextPersonName);
 
         ((Button) view.findViewById(R.id.join_btn)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,33 +69,31 @@ public class HomePageClicker extends Fragment implements View.OnClickListener, P
             }
         });
         ((Button) view.findViewById(R.id.exit_btn)).setOnClickListener(this);
+        Context context =  getContext();
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//        boolean savedCountries = sharedPreferences.getBoolean("removed_countries", false);
+////        if (savedCountries){
+////            this.countryList = parseCountries(ALL_COUNTRIES, context);
+////            Set<String> countries = sharedPreferences.getStringSet("savedCountries", new HashSet<String>());
+////            this.countryList.removeIf(country -> !countries.contains(country.getName()));
+////        } else
+////            this.countryList = parseCountries(ALL_COUNTRIES, context);
+//        if (savedCountries){
+//            this.countryList = importCountries(context, SAVED_COUNTRIES);
+//        }
+//        else
+//            this.countryList = parseCountries(ALL_COUNTRIES, context);
     }
 
     @Override
     public void onClick(View view) {
-        PlayersModel viewModel = new ViewModelProvider(this).get(PlayersModel.class);
-        Player player = viewModel.getMyPlayer();
-        if (player != null) {
-            player.setMyState(Finals.State.NOT_ACTIVE);
-            viewModel.onPauseUpdatePlayer();
-        }
         getActivity().finish();
         System.exit(0);
     }
 
-    @Override
-    public void onResetHomeBtns() {
-        playerNameET.setVisibility(View.VISIBLE);
-        setName.setVisibility(View.VISIBLE);
-        joinGame.setText("Join game");
-    }
-
-
     public interface FragHomePageListener{
         void OnClickJoinGame(String playerName);
     }
-
-
 
     /*
 

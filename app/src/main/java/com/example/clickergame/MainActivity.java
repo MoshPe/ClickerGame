@@ -4,9 +4,14 @@ import static com.example.clickergame.Finals.PLAYER_NAME;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreference;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,8 +23,9 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        changeTheme();
         setContentView(R.layout.activity_main);
-//        GameBoardClicker gameBoardClicker = (GameBoardClicker) getSupportFragmentManager().findFragmentByTag("GameBoardClicker");
 //
 //        if ((getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
 //            if (gameBoardClicker != null) {
@@ -33,6 +39,16 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
 //            }
 //            getSupportFragmentManager().executePendingTransactions();
 //        }
+
+    }
+
+    public void changeTheme(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean useDarkTheme = preferences.getBoolean("switch_theme", false);
+        Log.i("theme:", "get theme bool from main activity:"+useDarkTheme);
+        if (useDarkTheme) {
+            setTheme(R.style.Theme_ClickerGame_Dark);
+        }
     }
 
     // manu
@@ -96,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
         super.onResume();
         PlayersModel viewModel = new ViewModelProvider(this).get(PlayersModel.class);
         Player player = viewModel.getMyPlayer();
-        if (player != null && player.getKey() != null) {
+        if (player != null) {
             player.setMyState(Finals.State.ACTIVE);
             viewModel.onPauseUpdatePlayer();
         }

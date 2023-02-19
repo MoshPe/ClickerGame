@@ -25,7 +25,7 @@ import android.widget.TextView;
 import java.util.Objects;
 
 
-public class GameBoardClicker extends Fragment implements EndGameDialog.EditSeekBarProgressListener {
+public class GameBoardClicker extends Fragment implements PlayerAdapter.EndGameListener, EndGameDialog.EditSeekBarProgressListener {
     private PlayersModel viewModel;
     private String playerName = "";
 
@@ -69,9 +69,9 @@ public class GameBoardClicker extends Fragment implements EndGameDialog.EditSeek
         Player player = new Player(this.playerName, Finals.PLAYER_INIT_SCORE, 0);
         RecyclerView rvCountries = (RecyclerView) view.findViewById(R.id.playersRec);
         viewModel = new ViewModelProvider(requireActivity()).get(PlayersModel.class);
-        viewModel.initPlayersList();
-        viewModel.setPlayer(getContext(), player);
-        PlayerAdapter adapter = new PlayerAdapter(view.getContext(), getActivity(), viewModel);
+        viewModel.initPlayersList(view.getContext());
+        viewModel.setPlayer(player);
+        PlayerAdapter adapter = new PlayerAdapter(this, view.getContext(), getActivity(), viewModel);
         rvCountries.setAdapter(adapter);
         rvCountries.setLayoutManager(new GridLayoutManager(view.getContext(), 4));
     }
@@ -90,6 +90,20 @@ public class GameBoardClicker extends Fragment implements EndGameDialog.EditSeek
         GameInstructionsDialog editNameDialogFragment = GameInstructionsDialog.newInstance();
         editNameDialogFragment.setTargetFragment(this, 300);
         editNameDialogFragment.show(fm, "Instructions dialog");
+    }
+
+    @Override
+    public void showEndGameDialog(boolean isWin) {
+        Log.i("hello dialog", "outside dialog");
+        EndGameDialog endGameFrag = (EndGameDialog) getParentFragmentManager().findFragmentByTag("End Game dialog");
+        if (endGameFrag != null && Objects.requireNonNull(((EndGameDialog) endGameFrag).getDialog()).isShowing())
+            return;
+        Log.i("hello dialog", "inside dialog");
+        FragmentManager fm = getParentFragmentManager();
+        //TODO send player instance to pause frag for changing the background
+        EndGameDialog endGameDialog = EndGameDialog.newInstance(isWin);
+        endGameDialog.setTargetFragment(this, 300);
+        endGameDialog.show(fm, "End Game dialog");
     }
 
     @Override
