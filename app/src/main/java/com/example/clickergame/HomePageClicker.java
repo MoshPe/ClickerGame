@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 
 public class HomePageClicker extends Fragment implements View.OnClickListener {
     private FragHomePageListener listener;
@@ -68,15 +70,18 @@ public class HomePageClicker extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Context context =  getContext();
+        Gson gson = new Gson();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.playerNameET = view.findViewById(R.id.editTextTextPersonName);
         String playerKey = sharedPreferences.getString("playerKey", null);
-        setName = view.findViewById(R.id.textView3);
-        joinGame = view.findViewById(R.id.join_btn);
         if (playerKey != null){
-            listener.OnClickJoinGame(playerKey);
+            Player player = gson.fromJson(playerKey, Player.class);
+            setName = view.findViewById(R.id.textView3);
+            joinGame = view.findViewById(R.id.join_btn);
+            if (player != null){
+                listener.OnClickJoinGame(player.getName());
+            }
         }
-
 
         ((Button) view.findViewById(R.id.join_btn)).setOnClickListener(new View.OnClickListener() {
             @Override

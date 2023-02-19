@@ -1,8 +1,8 @@
 package com.example.clickergame;
 
+import static com.example.clickergame.Finals.IS_NEW_PLAYER;
 import static com.example.clickergame.Finals.PLAYER_NAME;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,21 +13,18 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import java.util.Objects;
 
 
 public class GameBoardClicker extends Fragment implements EndGameDialog.EditSeekBarProgressListener {
     private PlayersModel viewModel;
     private String playerName = "";
+    private boolean isNewPlayer;
 
     public GameBoardClicker() {
         // Required empty public constructor
@@ -70,7 +67,7 @@ public class GameBoardClicker extends Fragment implements EndGameDialog.EditSeek
         RecyclerView rvCountries = (RecyclerView) view.findViewById(R.id.playersRec);
         viewModel = new ViewModelProvider(requireActivity()).get(PlayersModel.class);
         viewModel.initPlayersList();
-        viewModel.setPlayer(getContext(), player);
+        viewModel.setPlayer(player);
         PlayerAdapter adapter = new PlayerAdapter(view.getContext(), getActivity(), viewModel);
         rvCountries.setAdapter(adapter);
         rvCountries.setLayoutManager(new GridLayoutManager(view.getContext(), 4));

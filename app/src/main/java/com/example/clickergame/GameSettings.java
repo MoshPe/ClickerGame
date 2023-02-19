@@ -15,16 +15,6 @@ public class GameSettings extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
-
-        SwitchPreference switchPreference = findPreference("switch_theme");
-        switchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                getActivity().recreate(); // Recreate the activity to apply the new theme
-                return true;
-            }
-        });
-
     }
 
     @Override

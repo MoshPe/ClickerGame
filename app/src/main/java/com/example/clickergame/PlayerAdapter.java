@@ -1,5 +1,7 @@
 package com.example.clickergame;
 
+import static com.example.clickergame.Finals.WIN_SCORE;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,39 +27,29 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
     private ArrayList<Player> playersList;
     private int selectedPosition = RecyclerView.NO_POSITION;
     private boolean isSelected;
+    private FragmentActivity activity;
 
     public PlayerAdapter(Context context, FragmentActivity activity, PlayersModel viewModel) {
         this.viewModel = viewModel;
         this.context = context;
         this.playersList = new ArrayList<>();
+        this.activity = activity;
 
         viewModel.getPlayersLiveData().observe(activity, new Observer<ArrayList<Player>>() {
             @Override
             public void onChanged(ArrayList<Player> players) {
                 setPlayersList(players);
                 if (!players.isEmpty()) {
+                    if (players.get(0).getScore() == 0)
+                        showEndGameDialog(false, activity);
                     for (int i = 1; i < players.size(); i++) {
-                        if (players.get(i).getScore() == 30){
+                        if (players.get(i).getScore() == WIN_SCORE){
                             showEndGameDialog(false, activity);
                             break;
                         }
                     }
                 }
                 notifyDataSetChanged();
-            }
-        });
-
-        viewModel.getPlayerLiveData().observe(activity, new Observer<Player>() {
-            @Override
-            public void onChanged(Player player) {
-                if (player.getScore() == 0 && !viewModel.getMyPlayerVisibility()){
-                    viewModel.setMyPlayerVisibility(true);
-                    showEndGameDialog(false, activity);
-                } else if (player.getScore() == 30 && !viewModel.getMyPlayerVisibility()){
-                    viewModel.setMyPlayerVisibility(true);
-                    showEndGameDialog(true, activity);
-                }
-                notifyItemChanged(0);
             }
         });
     }
@@ -138,6 +130,8 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
                     if (player.getMyState() != Finals.State.SUSPEND) {
                         viewModel.setItemSelected(position);
                         if (position == 0){
+                            if (player.getScore() == WIN_SCORE)
+                                showEndGameDialog(true, activity);
                             viewModel.increasePlayerScore(player);
                             notifyItemChanged(0);
                             player.increaseScore();

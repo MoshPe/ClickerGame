@@ -10,11 +10,11 @@ import com.google.firebase.database.ValueEventListener;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,38 +58,13 @@ public class PlayersModel extends AndroidViewModel {
             }
         };
         database.limitToFirst(16).addValueEventListener(postListener);
-
-//        Context context =  app.getApplicationContext();
-//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-//        boolean savedCountries = sharedPreferences.getBoolean("removed_countries", false);
-////        if (savedCountries){
-////            this.countryList = parseCountries(ALL_COUNTRIES, context);
-////            Set<String> countries = sharedPreferences.getStringSet("savedCountries", new HashSet<String>());
-////            this.countryList.removeIf(country -> !countries.contains(country.getName()));
-////        } else
-////            this.countryList = parseCountries(ALL_COUNTRIES, context);
-//        if (savedCountries){
-//            this.countryList = importCountries(context, SAVED_COUNTRIES);
-//        }
-//        else
-//            this.countryList = parseCountries(ALL_COUNTRIES, context);
     }
 
-    public void getSPPlayer(Context context){
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String playerKey = sharedPreferences.getString("playerKey", null);
-        if (playerKey != null){
-            for(Player player: this.playersList)
-                if (player.getKey() != null && player.getKey().equals(playerKey)){
-                    this.player = player;
-                    this.playersList.remove(player);
-                    this.playersList.add(0, player);
-                    this.playerLiveData.setValue(this.playersList.get(0));
-                    this.player.setMyState(Finals.State.ACTIVE);
-                    onPauseUpdatePlayer();
-                    break;
-                }
-        }
+    public ArrayList<Player> moveValueAtIndexToFront(ArrayList<Player> arrayToBeShifted, Player myPlayer) {
+        ArrayList<Player> shiftedArray = new ArrayList<>();
+        shiftedArray.add(0, myPlayer);
+        shiftedArray.addAll(arrayToBeShifted);
+        return shiftedArray;
     }
 
     private void pullData(DataSnapshot dataSnapshot){
@@ -104,7 +79,7 @@ public class PlayersModel extends AndroidViewModel {
         if (!this.playersList.isEmpty())
             this.playerLiveData.setValue(this.playersList.get(0));
         this.playersLiveData.setValue(this.playersList);
-        getSPPlayer(this.context);
+//        getSPPlayer(this.context);
     }
 
     public MutableLiveData<ArrayList<Player>> getPlayersLiveData() {
@@ -113,10 +88,6 @@ public class PlayersModel extends AndroidViewModel {
 
     public MutableLiveData<Player> getPlayerLiveData() {
         return this.playerLiveData;
-    }
-
-    public MutableLiveData<Integer> getItemSelected() {
-        return this.itemSelectedLive;
     }
 
     public void setItemSelected(int position){
@@ -128,27 +99,27 @@ public class PlayersModel extends AndroidViewModel {
         return this.itemSelected;
     }
 
-    public void setPlayer(Context context, Player player) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        this.player = player;
-        this.player.setId(this.playersList.size() + 1);
-        this.player.setVisibility(false);
-//        this.playerLiveData.setValue(this.player);
-        if (sharedPreferences.contains("playerKey")) {
-            return;
+    public void setPlayer(Player player) {
+        if (player.getKey() != null)
+            this.player = player;
+        else {
+            this.player = player;
+            this.player.setId(this.playersList.size() + 1);
+            this.player.setVisibility(false);
+            String key = this.database.push().getKey();
+            this.player.setKey(key);
+            this.database.child(player.getKey()).setValue(player);
         }
-        // add player to db
-        String key = this.database.push().getKey(); // generate unique key
-        player.setKey(key);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("playerKey", key);
-        editor.commit();
-        this.database.child(player.getKey()).setValue(player);
     }
 
     public void onPauseUpdatePlayer() {
+        if (this.player != null && this.player.getKey() != null)
+            this.database.child(this.player.getKey()).child("myState").setValue(this.player.getMyState());
+    }
+
+    public void onPauseUpdatePlayer1(Player player) {
         if (player != null && player.getKey() != null)
-            this.database.child(player.getKey()).child("myState").setValue(player.getMyState());
+            this.database.child(player.getKey()).setValue(player);
     }
 
     public void removePlayer(Player player){

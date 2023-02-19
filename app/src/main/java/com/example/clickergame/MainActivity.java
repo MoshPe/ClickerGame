@@ -1,14 +1,12 @@
 package com.example.clickergame;
 
+import static com.example.clickergame.Finals.IS_NEW_PLAYER;
 import static com.example.clickergame.Finals.PLAYER_NAME;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
-import androidx.preference.SwitchPreferenceCompat;
 
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -18,12 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback;
-import org.imaginativeworld.oopsnointernet.dialogs.pendulum.DialogPropertiesPendulum;
-import org.imaginativeworld.oopsnointernet.dialogs.pendulum.NoInternetDialogPendulum;
-import org.imaginativeworld.oopsnointernet.dialogs.signal.DialogPropertiesSignal;
-import org.imaginativeworld.oopsnointernet.dialogs.signal.NoInternetDialogSignal;
-import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire;
+import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity implements HomePageClicker.FragHomePageListener {
     private NetworkBroadcastReceiver r = new NetworkBroadcastReceiver();
@@ -32,22 +25,6 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-//        GameBoardClicker gameBoardClicker = (GameBoardClicker) getSupportFragmentManager().findFragmentByTag("GameBoardClicker");
-//
-//        if ((getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
-//            if (gameBoardClicker != null) {
-//                getSupportFragmentManager().beginTransaction()
-//                        .show(gameBoardClicker)
-//                        .commit();
-//            } else {
-//                getSupportFragmentManager().beginTransaction()
-//                        .add(R.id.fragmentContainerView, HomePageClicker.class,null, "HomePage")
-//                        .commit();
-//            }
-//            getSupportFragmentManager().executePendingTransactions();
-//        }
-//        checkNetwork();
     }
 
     // manu
@@ -82,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
     public void OnClickJoinGame(String playerName) {
         Bundle bundle = new Bundle();
         bundle.putString(PLAYER_NAME, playerName);
-        Log.i("hello on join", "create gameboard");
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
@@ -100,7 +76,13 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
         PlayersModel viewModel = new ViewModelProvider(this).get(PlayersModel.class);
         Player player = viewModel.getMyPlayer();
         if (player != null) {
+            Gson gson = new Gson();
+            String playerJson = gson.toJson(player);
             player.setMyState(Finals.State.NOT_ACTIVE);
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("playerKey", playerJson);
+            editor.commit();
             viewModel.onPauseUpdatePlayer();
         }
     }
@@ -112,18 +94,15 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
         registerReceiver(r, i);
         PlayersModel viewModel = new ViewModelProvider(this).get(PlayersModel.class);
         Player player = viewModel.getMyPlayer();
-        if (player != null && player.getKey() != null) {
-            player.setMyState(Finals.State.ACTIVE);
-            viewModel.onPauseUpdatePlayer();
+        Gson gson = new Gson();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String json = sharedPreferences.getString("playerKey", null);
+        if (json == null){
+            return;
         }
-    }
-
-    public void changeTheme(){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean useDarkTheme = preferences.getBoolean("switch_theme", false);
-        Log.i("theme:", "get theme bool from main activity:"+useDarkTheme);
-        if (useDarkTheme) {
-            setTheme(R.style.Theme_ClickerGame_Dark);
-        }
+        player = gson.fromJson(json, Player.class);
+        viewModel.setPlayer(player);
+        player.setMyState(Finals.State.ACTIVE);
+        viewModel.onPauseUpdatePlayer();
     }
 }

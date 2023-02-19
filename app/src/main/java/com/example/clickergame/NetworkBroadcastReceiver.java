@@ -13,10 +13,6 @@ import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProvider;
 
-import com.saadahmedsoft.popupdialog.PopupDialog;
-import com.saadahmedsoft.popupdialog.Styles;
-import com.saadahmedsoft.popupdialog.listener.OnDialogButtonClickListener;
-
 public class NetworkBroadcastReceiver extends BroadcastReceiver {
     private boolean isConnected = false;
     private Context context;
