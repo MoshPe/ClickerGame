@@ -37,7 +37,7 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
                 setPlayersList(players);
                 if (!players.isEmpty()) {
                     for (int i = 1; i < players.size(); i++) {
-                        if (players.get(i).getScore() == 100){
+                        if (players.get(i).getScore() == 30){
                             showEndGameDialog(false, activity);
                             break;
                         }
@@ -53,9 +53,9 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
                 if (player.getScore() == 0 && !viewModel.getMyPlayerVisibility()){
                     viewModel.setMyPlayerVisibility(true);
                     showEndGameDialog(false, activity);
-                } else if (player.getScore() == 100 && !viewModel.getMyPlayerVisibility()){
-                    showEndGameDialog(true, activity);
+                } else if (player.getScore() == 30 && !viewModel.getMyPlayerVisibility()){
                     viewModel.setMyPlayerVisibility(true);
+                    showEndGameDialog(true, activity);
                 }
                 notifyItemChanged(0);
             }
@@ -105,10 +105,6 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
 
         if (position == 0)
             holder.itemView.setBackgroundResource(R.color.white);
-/*        if (this.selectedPosition == position)
-            holder.itemView.setBackgroundResource(R.color.white);
-        else
-            holder.itemView.setBackgroundResource(R.color.transparent);*/
         holder.setPlayer(position, player);
     }
 

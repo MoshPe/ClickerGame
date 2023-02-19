@@ -78,10 +78,9 @@ public class PlayersModel extends AndroidViewModel {
     public void getSPPlayer(Context context){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String playerKey = sharedPreferences.getString("playerKey", null);
-
         if (playerKey != null){
             for(Player player: this.playersList)
-                if (player.getKey().equals(playerKey)){
+                if (player.getKey() != null && player.getKey().equals(playerKey)){
                     this.player = player;
                     this.playersList.remove(player);
                     this.playersList.add(0, player);
@@ -99,7 +98,7 @@ public class PlayersModel extends AndroidViewModel {
             Player temp = postSnapshot.getValue(Player.class);
             if (this.player.getKey() != null && temp.isEqual(this.player))
                 this.playersList.add(0, new Player(temp));
-            else
+            else if (this.player.getKey() != null)
                 this.playersList.add(new Player(temp));
         }
         if (!this.playersList.isEmpty())
@@ -134,8 +133,10 @@ public class PlayersModel extends AndroidViewModel {
         this.player = player;
         this.player.setId(this.playersList.size() + 1);
         this.player.setVisibility(false);
-        if (sharedPreferences.contains("playerKey"))
+//        this.playerLiveData.setValue(this.player);
+        if (sharedPreferences.contains("playerKey")) {
             return;
+        }
         // add player to db
         String key = this.database.push().getKey(); // generate unique key
         player.setKey(key);
@@ -188,6 +189,10 @@ public class PlayersModel extends AndroidViewModel {
         if (!playersList.isEmpty()){
             this.database.removeValue();
             playersList.clear();
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove("playerKey");
+            editor.commit();
         }
     }
 }

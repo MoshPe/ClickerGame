@@ -30,10 +30,8 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        changeTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
 //        GameBoardClicker gameBoardClicker = (GameBoardClicker) getSupportFragmentManager().findFragmentByTag("GameBoardClicker");
 //
