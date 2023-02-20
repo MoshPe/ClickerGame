@@ -115,7 +115,7 @@ public class ForegroundService extends Service {
             boolean isFound = false;
             for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                 Player player = postSnapshot.getValue(Player.class);
-                if (player.getKey().equals(selfKey)){
+                if (player != null && player.getKey() != null && selfKey != null && player.getKey().equals(selfKey)){
                     isFound = true;
                     mNotifyBuilder.setContentText(Long.toString(player.getScore()));
                     mNotiMgr.notify(NOTIFICATION_ID1, mNotifyBuilder.build());
