@@ -165,7 +165,7 @@ public class PlayersModel extends AndroidViewModel {
     public void resetGame() {
         if (!playersList.isEmpty()){
             this.database.removeValue();
-            playersList.clear();
+            playersList = new ArrayList<>();
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove("playerKey");

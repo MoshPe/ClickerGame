@@ -92,5 +92,15 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
         super.onResume();
         IntentFilter i = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(r, i);
+        Gson gson = new Gson();
+        PlayersModel viewModel = new ViewModelProvider(this).get(PlayersModel.class);
+        Player player = viewModel.getMyPlayer();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String playerJson = sharedPreferences.getString("playerKey", null);
+        if (playerJson != null){
+            player = gson.fromJson(playerJson, Player.class);
+            player.setMyState(Finals.State.ACTIVE);
+            viewModel.onPauseUpdatePlayer();
+        }
     }
 }

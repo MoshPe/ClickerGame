@@ -54,10 +54,6 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
         });
     }
 
-    public interface EndGameListener{
-        void showEndGameDialog(boolean isWin);
-    }
-
     private void showEndGameDialog(boolean isWin, FragmentActivity activity) {
         EndGameDialog endGameFrag = (EndGameDialog)  activity.getSupportFragmentManager().findFragmentByTag("End Game dialog");
         if (endGameFrag != null && Objects.requireNonNull(((EndGameDialog) endGameFrag).getDialog()).isShowing())

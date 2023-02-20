@@ -107,14 +107,4 @@ public class HomePageClicker extends Fragment implements View.OnClickListener {
     public interface FragHomePageListener{
         void OnClickJoinGame(String playerName);
     }
-
-
-
-    /*
-
-    Having a continue button or create a new player
-
-        playButton.setVisibility(View.GONE);
-        stopButton.setVisibility(View.VISIBLE);
-     */
 }
