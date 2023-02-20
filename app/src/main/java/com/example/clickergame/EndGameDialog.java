@@ -3,6 +3,7 @@ package com.example.clickergame;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,6 +15,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 public class EndGameDialog extends DialogFragment {
     private PlayersModel viewModel;
@@ -40,12 +42,22 @@ public class EndGameDialog extends DialogFragment {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        Finals.isDialogShown = true;
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         viewModel = new ViewModelProvider(requireActivity()).get(PlayersModel.class);
         View view = getActivity().getLayoutInflater().inflate(R.layout.layout_dialog_end_game, null, false);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("playerKey");
+        editor.commit();
         if (this.isWin){
             dialogBuilder.setTitle(R.string.win);
             dialogBuilder.setIcon(R.drawable.party_emojii);

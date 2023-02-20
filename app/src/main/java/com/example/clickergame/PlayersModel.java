@@ -6,6 +6,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import android.app.Application;
 import android.content.Context;
@@ -76,8 +77,8 @@ public class PlayersModel extends AndroidViewModel {
             else if (this.player.getKey() != null)
                 this.playersList.add(new Player(temp));
         }
-        if (!this.playersList.isEmpty())
-            this.playerLiveData.setValue(this.playersList.get(0));
+        if (this.playersList.isEmpty())
+            this.playersList.add(0, this.player);
         this.playersLiveData.setValue(this.playersList);
 //        getSPPlayer(this.context);
     }
@@ -100,16 +101,21 @@ public class PlayersModel extends AndroidViewModel {
     }
 
     public void setPlayer(Player player) {
-        if (player.getKey() != null)
-            this.player = player;
-        else {
-            this.player = player;
-            this.player.setId(this.playersList.size() + 1);
-            this.player.setVisibility(false);
-            String key = this.database.push().getKey();
-            this.player.setKey(key);
-            this.database.child(player.getKey()).setValue(player);
+        Gson gson = new Gson();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context);
+        String playerJson = sharedPreferences.getString("playerKey", null);
+        if (playerJson != null){
+            this.player = gson.fromJson(playerJson, Player.class);
+            this.player.setMyState(Finals.State.ACTIVE);
+            onPauseUpdatePlayer();
+            return;
         }
+        this.player = player;
+        this.player.setId(this.playersList.size() + 1);
+        this.player.setVisibility(false);
+        String key = this.database.push().getKey();
+        this.player.setKey(key);
+        this.database.child(player.getKey()).setValue(player);
     }
 
     public void onPauseUpdatePlayer() {

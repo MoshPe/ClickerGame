@@ -40,10 +40,10 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
             public void onChanged(ArrayList<Player> players) {
                 setPlayersList(players);
                 if (!players.isEmpty()) {
-                    if (players.get(0).getScore() == 0)
+                    if (players.get(0).getScore() == 0 && !Finals.isDialogShown)
                         showEndGameDialog(false, activity);
                     for (int i = 1; i < players.size(); i++) {
-                        if (players.get(i).getScore() == WIN_SCORE){
+                        if (players.get(i).getScore() == WIN_SCORE && !Finals.isDialogShown){
                             showEndGameDialog(false, activity);
                             break;
                         }

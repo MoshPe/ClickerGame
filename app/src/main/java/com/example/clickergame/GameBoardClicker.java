@@ -62,6 +62,7 @@ public class GameBoardClicker extends Fragment implements EndGameDialog.EditSeek
     @Override
     public void onViewCreated(View view,@Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Finals.isDialogShown = false;
         showInstructionsDialog();
         Player player = new Player(this.playerName, Finals.PLAYER_INIT_SCORE, 0);
         RecyclerView rvCountries = (RecyclerView) view.findViewById(R.id.playersRec);

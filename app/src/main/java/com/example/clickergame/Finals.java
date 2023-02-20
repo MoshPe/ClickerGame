@@ -6,4 +6,5 @@ public class Finals {
     public static final int PLAYER_INIT_SCORE = 10;
     public enum State { ACTIVE, NOT_ACTIVE, SUSPEND };
     public static final int WIN_SCORE = 15;
+    public static boolean isDialogShown = false;
 }
