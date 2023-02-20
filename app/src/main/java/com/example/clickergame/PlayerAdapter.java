@@ -26,7 +26,6 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
     private final PlayersModel viewModel;
     private ArrayList<Player> playersList;
     private int selectedPosition = RecyclerView.NO_POSITION;
-    private boolean isSelected;
     private FragmentActivity activity;
 
     public PlayerAdapter(Context context, FragmentActivity activity, PlayersModel viewModel) {

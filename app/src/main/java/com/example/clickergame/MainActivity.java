@@ -1,6 +1,5 @@
 package com.example.clickergame;
 
-import static com.example.clickergame.Finals.IS_NEW_PLAYER;
 import static com.example.clickergame.Finals.PLAYER_NAME;
 
 import androidx.annotation.NonNull;
@@ -8,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -24,10 +26,17 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        changeTheme();
         setContentView(R.layout.activity_main);
     }
 
-    // manu
+    public void changeTheme(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isDarkTheme = preferences.getBoolean("switch_theme", false);
+        if (isDarkTheme)
+            setTheme(R.style.Theme_ClickerGame_Dark);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -75,16 +84,33 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
         unregisterReceiver(r);
         PlayersModel viewModel = new ViewModelProvider(this).get(PlayersModel.class);
         Player player = viewModel.getMyPlayer();
-        if (player != null) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean allowNotification = sharedPreferences.getBoolean("allow_notification", false);
+        if (!isMyServiceRunning(ForegroundService.class) && allowNotification){
+            Intent intent = new Intent(this,
+                    ForegroundService.class);
+            intent.setAction("Start Foreground Service");
+            startService(intent);
+        }
+        if (player != null && player.getKey() != null) {
             Gson gson = new Gson();
             String playerJson = gson.toJson(player);
             player.setMyState(Finals.State.NOT_ACTIVE);
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("playerKey", playerJson);
             editor.commit();
             viewModel.onPauseUpdatePlayer();
         }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -101,6 +127,17 @@ public class MainActivity extends AppCompatActivity implements HomePageClicker.F
             player = gson.fromJson(playerJson, Player.class);
             player.setMyState(Finals.State.ACTIVE);
             viewModel.onPauseUpdatePlayer();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (isMyServiceRunning(ForegroundService.class)){
+            Intent intent = new Intent(this,
+                    ForegroundService.class);
+            intent.setAction("Stop Foreground Service");
+            stopService(intent);
         }
     }
 }

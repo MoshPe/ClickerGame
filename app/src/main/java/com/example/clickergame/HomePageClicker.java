@@ -30,17 +30,6 @@ public class HomePageClicker extends Fragment implements View.OnClickListener {
         // Required empty public constructor
     }
 
-
-    public static HomePageClicker newInstance(String param1, String param2) {
-        HomePageClicker fragment = new HomePageClicker();
-        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-
     // check that we create instance of the listener
     public void onAttach(@NonNull Context context) {
         try{
@@ -62,7 +51,6 @@ public class HomePageClicker extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.frag_home_page_clicker, container, false);
     }
 

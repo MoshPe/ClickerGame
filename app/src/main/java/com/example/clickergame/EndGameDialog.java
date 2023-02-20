@@ -58,6 +58,7 @@ public class EndGameDialog extends DialogFragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove("playerKey");
         editor.commit();
+        viewModel.setMyPlayerKey(null);
         if (this.isWin){
             dialogBuilder.setTitle(R.string.win);
             dialogBuilder.setIcon(R.drawable.party_emojii);
@@ -77,17 +78,6 @@ public class EndGameDialog extends DialogFragment {
             }
         });
         return dialogBuilder.create();
-    }
-
-    public interface EditSeekBarProgressListener {
-        void onFinishSeekBarDialog();
-    }
-
-    public void sendBackResult() {
-        // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
-        EditSeekBarProgressListener listener = (EditSeekBarProgressListener) getTargetFragment();
-        listener.onFinishSeekBarDialog();
-        dismiss();
     }
 }
 

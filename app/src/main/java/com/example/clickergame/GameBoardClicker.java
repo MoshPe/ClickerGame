@@ -3,6 +3,9 @@ package com.example.clickergame;
 import static com.example.clickergame.Finals.IS_NEW_PLAYER;
 import static com.example.clickergame.Finals.PLAYER_NAME;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,10 +24,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class GameBoardClicker extends Fragment implements EndGameDialog.EditSeekBarProgressListener {
+public class GameBoardClicker extends Fragment {
     private PlayersModel viewModel;
     private String playerName = "";
-    private boolean isNewPlayer;
 
     public GameBoardClicker() {
         // Required empty public constructor
@@ -65,18 +67,17 @@ public class GameBoardClicker extends Fragment implements EndGameDialog.EditSeek
         Finals.isDialogShown = false;
         showInstructionsDialog();
         Player player = new Player(this.playerName, Finals.PLAYER_INIT_SCORE, 0);
-        RecyclerView rvCountries = (RecyclerView) view.findViewById(R.id.playersRec);
+        RecyclerView rvPlayers = (RecyclerView) view.findViewById(R.id.playersRec);
         viewModel = new ViewModelProvider(requireActivity()).get(PlayersModel.class);
         viewModel.initPlayersList();
         viewModel.setPlayer(player);
         PlayerAdapter adapter = new PlayerAdapter(view.getContext(), getActivity(), viewModel);
-        rvCountries.setAdapter(adapter);
-        rvCountries.setLayoutManager(new GridLayoutManager(view.getContext(), 4));
+        rvPlayers.setAdapter(adapter);
+        rvPlayers.setLayoutManager(new GridLayoutManager(view.getContext(), 4));
     }
 
     private void showPauseDialog(Player player) {
         FragmentManager fm = getParentFragmentManager();
-        //TODO send player instance to pause frag for changing the background
         PauseDialogFrag editNameDialogFragment = PauseDialogFrag.newInstance(player);
         editNameDialogFragment.setTargetFragment(this, 300);
         editNameDialogFragment.show(fm, "Pause dialog");
@@ -84,14 +85,8 @@ public class GameBoardClicker extends Fragment implements EndGameDialog.EditSeek
 
     private void showInstructionsDialog() {
         FragmentManager fm = getParentFragmentManager();
-        //TODO send player instance to pause frag for changing the background
         GameInstructionsDialog editNameDialogFragment = GameInstructionsDialog.newInstance();
         editNameDialogFragment.setTargetFragment(this, 300);
         editNameDialogFragment.show(fm, "Instructions dialog");
-    }
-
-    @Override
-    public void onFinishSeekBarDialog() {
-        getParentFragmentManager().popBackStackImmediate("BBB", FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 }

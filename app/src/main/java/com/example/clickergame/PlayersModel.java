@@ -1,5 +1,7 @@
 package com.example.clickergame;
 
+import static com.example.clickergame.Finals.selfKey;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -8,8 +10,10 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -38,7 +42,7 @@ public class PlayersModel extends AndroidViewModel {
         this.playerLiveData = new MutableLiveData<>();
         this.itemSelected = RecyclerView.NO_POSITION;
         this.itemSelectedLive.setValue(this.itemSelected);
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseDatabase.getInstance();
         this.database = FirebaseDatabase.getInstance().getReference("players");
         this.database.keepSynced(true);
         this.playersList = new ArrayList<Player>();
@@ -61,13 +65,6 @@ public class PlayersModel extends AndroidViewModel {
         database.limitToFirst(16).addValueEventListener(postListener);
     }
 
-    public ArrayList<Player> moveValueAtIndexToFront(ArrayList<Player> arrayToBeShifted, Player myPlayer) {
-        ArrayList<Player> shiftedArray = new ArrayList<>();
-        shiftedArray.add(0, myPlayer);
-        shiftedArray.addAll(arrayToBeShifted);
-        return shiftedArray;
-    }
-
     private void pullData(DataSnapshot dataSnapshot){
         this.playersList = new ArrayList<>();
         for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
@@ -80,7 +77,6 @@ public class PlayersModel extends AndroidViewModel {
         if (this.playersList.isEmpty())
             this.playersList.add(0, this.player);
         this.playersLiveData.setValue(this.playersList);
-//        getSPPlayer(this.context);
     }
 
     public MutableLiveData<ArrayList<Player>> getPlayersLiveData() {
@@ -108,6 +104,7 @@ public class PlayersModel extends AndroidViewModel {
             this.player = gson.fromJson(playerJson, Player.class);
             this.player.setMyState(Finals.State.ACTIVE);
             onPauseUpdatePlayer();
+            selfKey = this.player.getKey();
             return;
         }
         this.player = player;
@@ -116,16 +113,12 @@ public class PlayersModel extends AndroidViewModel {
         String key = this.database.push().getKey();
         this.player.setKey(key);
         this.database.child(player.getKey()).setValue(player);
+        selfKey = key;
     }
 
     public void onPauseUpdatePlayer() {
         if (this.player != null && this.player.getKey() != null)
             this.database.child(this.player.getKey()).child("myState").setValue(this.player.getMyState());
-    }
-
-    public void onPauseUpdatePlayer1(Player player) {
-        if (player != null && player.getKey() != null)
-            this.database.child(player.getKey()).setValue(player);
     }
 
     public void removePlayer(Player player){
@@ -158,6 +151,10 @@ public class PlayersModel extends AndroidViewModel {
         this.player.setVisibility(visibility);
     }
 
+    public void setMyPlayerKey(String key){
+        this.player.setKey(key);
+    }
+
     public boolean getMyPlayerVisibility() {
         return this.player.isVisibility();
     }
@@ -165,6 +162,7 @@ public class PlayersModel extends AndroidViewModel {
     public void resetGame() {
         if (!playersList.isEmpty()){
             this.database.removeValue();
+            selfKey = null;
             playersList = new ArrayList<>();
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context);
             SharedPreferences.Editor editor = sharedPreferences.edit();

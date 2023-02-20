@@ -43,7 +43,6 @@ public class NetworkBroadcastReceiver extends BroadcastReceiver {
             this.isConnected = false;
             tryConnection();
         }
-//        Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
     }
 
     private void tryConnection() {

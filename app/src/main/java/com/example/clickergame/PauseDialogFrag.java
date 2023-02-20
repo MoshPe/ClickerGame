@@ -50,7 +50,6 @@ public class PauseDialogFrag extends DialogFragment  {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (dialog != null) {
-                    //TODO change player cube to white
                     player.setMyState(Finals.State.ACTIVE);
                     viewModel.onPauseUpdatePlayer();
                     dialog.dismiss();
@@ -61,7 +60,6 @@ public class PauseDialogFrag extends DialogFragment  {
         dialogBuilder.setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO change player cube to red and set player to inactive in DB
                 viewModel.removePlayer(player);
                 getFragmentManager().popBackStackImmediate("BBB", FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
